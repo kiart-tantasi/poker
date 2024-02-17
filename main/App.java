@@ -15,11 +15,21 @@ public class App {
         // }
         // scanner.close();
 
-        // test isPair and isTwoPairs
-        List<String> list = new ArrayList<>(Arrays.asList(new String[] { "1D", "6D", "2D", "3D", "4D" }));
-        System.out.println("isFlush:" + isFlush(list));
-        list = new ArrayList<>(Arrays.asList(new String[] { "1C", "6D", "2D", "3D", "4D" }));
-        System.out.println("isFlush:" + isFlush(list));
+        // test isFullHouse
+        // List<String> list = new ArrayList<>(Arrays.asList(new String[] { "1D", "1D", "1D", "2D", "2D" }));
+        // System.out.println("isFullHouse:" + isFullHouse(list));
+        // list = new ArrayList<>(Arrays.asList(new String[] { "1C", "1D", "1D", "2D", "3D" }));
+        // System.out.println("isFullHouse:" + isFullHouse(list));
+        // list = new ArrayList<>(Arrays.asList(new String[] { "1C", "1D", "2D", "2D", "3D" }));
+        // System.out.println("isFullHouse:" + isFullHouse(list));
+
+        // test isFlush
+        // List<String> list = new ArrayList<>(Arrays.asList(new String[] { "1D", "6D",
+        // "2D", "3D", "4D" }));
+        // System.out.println("isFlush:" + isFlush(list));
+        // list = new ArrayList<>(Arrays.asList(new String[] { "1C", "6D", "2D", "3D",
+        // "4D" }));
+        // System.out.println("isFlush:" + isFlush(list));
 
         // test isThreeOfAKind
         // List<String> list = new ArrayList<>(Arrays.asList(new String[] { "1D", "2D",
@@ -29,10 +39,23 @@ public class App {
         // "5D" }));
         // System.out.println("isThreeOfAKind: " + isThreeOfAKind(list));
 
-        // test isPair and isTwoPairs
-        // List<String> list = new ArrayList<>(Arrays.asList(new String[] { "1D", "6D",
-        // "2D", "3D", "4D" }));
+        // test isTwoPairs
+        // List<String> list = new ArrayList<>(Arrays.asList(new String[] { "1D", "1D",
+        // "2D", "2D", "4D" }));
         // System.out.println("isTwoPairs:" + isTwoPairs(list));
+        // list = new ArrayList<>(Arrays.asList(new String[] { "1D", "1D", "1D", "1D",
+        // "2D" }));
+        // System.out.println("isTwoPairs:" + isTwoPairs(list));
+        // list = new ArrayList<>(Arrays.asList(new String[] { "1D", "2D", "3D", "4D",
+        // "5D" }));
+        // System.out.println("isTwoPairs:" + isTwoPairs(list));
+
+        // test isPairs
+        // List<String> list = new ArrayList<>(Arrays.asList(new String[] { "1D", "2D",
+        // "3D", "4D", "4D" }));
+        // System.out.println("isPair:" + isPair(list));
+        // list = new ArrayList<>(Arrays.asList(new String[] { "1D", "2D", "3D", "4D",
+        // "5D" }));
         // System.out.println("isPair:" + isPair(list));
     }
 
@@ -99,6 +122,38 @@ public class App {
     }
 
     private static boolean isFullHouse(List<String> cards) {
+        String threeKindValue = "DEFAULT_VALUE";
+        // find three kind
+        for (int i = 0; i < 3; i++) {
+            int count = 1;
+            String value1 = cards.get(i).substring(0, 1);
+            for (int j = i + 1; j < cards.size(); j++) {
+                String value2 = cards.get(j).substring(0, 1);
+                if (value1.equals(value2)) {
+                    count++;
+                    if (count == 3) {
+                        threeKindValue = value1;
+                    }
+                }
+            }
+        }
+        // no three kind found
+        if (threeKindValue.equals("DEFAULT_VALUE")) {
+            return false;
+        }
+        // find a pair
+        for (int i = 0; i < cards.size() - 1; i++) {
+            String value1 = cards.get(i).substring(0, 1);
+            if (value1.equals(threeKindValue)) {
+                continue;
+            }
+            for (int j = i + 1; j < cards.size(); j++) {
+                String value2 = cards.get(j).substring(0, 1);
+                if (value1.equals(value2)) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -124,34 +179,13 @@ public class App {
 
     private static boolean isThreeOfAKind(List<String> cards) {
         for (int i = 0; i < 3; i++) {
+            int count = 1;
             String value1 = cards.get(i).substring(0, 1);
             for (int j = i + 1; j < cards.size(); j++) {
                 String value2 = cards.get(j).substring(0, 1);
                 if (value1.equals(value2)) {
-                    for (int k = j + 1; k < cards.size(); k++) {
-                        String value3 = cards.get(k).substring(0, 1);
-                        if (value2.equals(value3)) {
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-    private static boolean isTwoPairs(List<String> cards) {
-        List<Integer> counted = new ArrayList<>();
-        int count = 0;
-        for (int i = 0; i < cards.size(); i++) {
-            String value1 = cards.get(i).substring(0, 1);
-            for (int j = i + 1; j < cards.size(); j++) {
-                String value2 = cards.get(j).substring(0, 1);
-                if (value1.equals(value2) && !counted.contains(i) && !counted.contains(j)) {
-                    counted.add(i);
-                    counted.add(j);
                     count++;
-                    if (count == 2) {
+                    if (count == 3) {
                         return true;
                     }
                 }
@@ -160,8 +194,28 @@ public class App {
         return false;
     }
 
-    private static boolean isPair(List<String> cards) {
+    private static boolean isTwoPairs(List<String> cards) {
+        String firstPair = "DEFAULT_VALUE";
+        int count = 0;
         for (int i = 0; i < cards.size(); i++) {
+            String value1 = cards.get(i).substring(0, 1);
+            for (int j = i + 1; j < cards.size(); j++) {
+                String value2 = cards.get(j).substring(0, 1);
+                if (value1.equals(value2) && !value1.equals(firstPair)) {
+                    count++;
+                    if (count == 2) {
+                        return true;
+                    } else {
+                        firstPair = value1;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean isPair(List<String> cards) {
+        for (int i = 0; i < cards.size() - 1; i++) {
             String value1 = cards.get(i).substring(0, 1);
             for (int j = i + 1; j < cards.size(); j++) {
                 String value2 = cards.get(j).substring(0, 1);
