@@ -15,11 +15,25 @@ public class App {
         // }
         // scanner.close();
 
-        // [TEST]
-        String[] array = new String[] { "1D", "6D", "2D", "3D", "4D" };
-        List<String> list = new ArrayList<>(Arrays.asList(array));
-        System.out.println("isTwoPairs:" + isTwoPairs(list));
-        System.out.println("isPair:" + isPair(list));
+        // test isPair and isTwoPairs
+        List<String> list = new ArrayList<>(Arrays.asList(new String[] { "1D", "6D", "2D", "3D", "4D" }));
+        System.out.println("isFlush:" + isFlush(list));
+        list = new ArrayList<>(Arrays.asList(new String[] { "1C", "6D", "2D", "3D", "4D" }));
+        System.out.println("isFlush:" + isFlush(list));
+
+        // test isThreeOfAKind
+        // List<String> list = new ArrayList<>(Arrays.asList(new String[] { "1D", "2D",
+        // "3D", "3D", "3D" }));
+        // System.out.println("isThreeOfAKind: " + isThreeOfAKind(list));
+        // list = new ArrayList<>(Arrays.asList(new String[] { "1D", "2D", "3D", "4D",
+        // "5D" }));
+        // System.out.println("isThreeOfAKind: " + isThreeOfAKind(list));
+
+        // test isPair and isTwoPairs
+        // List<String> list = new ArrayList<>(Arrays.asList(new String[] { "1D", "6D",
+        // "2D", "3D", "4D" }));
+        // System.out.println("isTwoPairs:" + isTwoPairs(list));
+        // System.out.println("isPair:" + isPair(list));
     }
 
     private static void compare(String line) {
@@ -89,17 +103,40 @@ public class App {
     }
 
     private static boolean isFlush(List<String> cards) {
-        return false;
+        String firstSuit = cards.get(0).substring(1, 2);
+        for (int i = 1; i < cards.size(); i++) {
+            String currentSuit = cards.get(i).substring(1, 2);
+            if (!firstSuit.equals(currentSuit)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private static boolean isStraight(List<String> cards) {
+        // not fully understand what straight means
+        // Are all of below straight ?
+        // 1 2 3 4 5
+        // 5 4 3 2 1
+        // 1 2 5 4 3
         return false;
     }
 
     private static boolean isThreeOfAKind(List<String> cards) {
-        // for (int i = 0; i < 4; i++) {
-
-        // }
+        for (int i = 0; i < 3; i++) {
+            String value1 = cards.get(i).substring(0, 1);
+            for (int j = i + 1; j < cards.size(); j++) {
+                String value2 = cards.get(j).substring(0, 1);
+                if (value1.equals(value2)) {
+                    for (int k = j + 1; k < cards.size(); k++) {
+                        String value3 = cards.get(k).substring(0, 1);
+                        if (value2.equals(value3)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
         return false;
     }
 
