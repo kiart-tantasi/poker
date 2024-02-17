@@ -15,12 +15,36 @@ public class App {
         // }
         // scanner.close();
 
+        // ===================== [TEST} ===================== //
+
+        // test isRoyalFlush
+        // List<String> list = new ArrayList<>(Arrays.asList(new String[] { "TD", "JD",
+        // "QD", "KD", "AD" }));
+        // System.out.println("isRoyalFlush:" + isRoyalFlush(list));
+        // list = new ArrayList<>(Arrays.asList(new String[] { "TD", "JS", "QD", "KD",
+        // "AD" }));
+        // System.out.println("isRoyalFlush:" + isRoyalFlush(list));
+        // list = new ArrayList<>(Arrays.asList(new String[] { "3D", "JD", "QD", "KD",
+        // "AD" }));
+        // System.out.println("isRoyalFlush:" + isRoyalFlush(list));
+
+        // test isFourOfAKind
+        // List<String> list = new ArrayList<>(Arrays.asList(new String[] { "2D", "1D",
+        // "1D", "1D", "1D" }));
+        // System.out.println("isFourOfAKind:" + isFourOfAKind(list));
+        // list = new ArrayList<>(Arrays.asList(new String[] { "2D", "2D", "1D", "1D",
+        // "1D" }));
+        // System.out.println("isFourOfAKind:" + isFourOfAKind(list));
+
         // test isFullHouse
-        // List<String> list = new ArrayList<>(Arrays.asList(new String[] { "1D", "1D", "1D", "2D", "2D" }));
+        // List<String> list = new ArrayList<>(Arrays.asList(new String[] { "1D", "1D",
+        // "1D", "2D", "2D" }));
         // System.out.println("isFullHouse:" + isFullHouse(list));
-        // list = new ArrayList<>(Arrays.asList(new String[] { "1C", "1D", "1D", "2D", "3D" }));
+        // list = new ArrayList<>(Arrays.asList(new String[] { "1C", "1D", "1D", "2D",
+        // "3D" }));
         // System.out.println("isFullHouse:" + isFullHouse(list));
-        // list = new ArrayList<>(Arrays.asList(new String[] { "1C", "1D", "2D", "2D", "3D" }));
+        // list = new ArrayList<>(Arrays.asList(new String[] { "1C", "1D", "2D", "2D",
+        // "3D" }));
         // System.out.println("isFullHouse:" + isFullHouse(list));
 
         // test isFlush
@@ -110,14 +134,61 @@ public class App {
     }
 
     private static boolean isRoyalFlush(List<String> cards) {
-        return false;
+        String firstSuite = cards.get(0).substring(1, 2);
+        for (int i = 1; i < cards.size(); i++) {
+            String currentSuite = cards.get(i).substring(1, 2);
+            if (!firstSuite.equals(currentSuite)) {
+                return false;
+            }
+        }
+        boolean isTen = false;
+        boolean isJack = false;
+        boolean isQueen = false;
+        boolean isKing = false;
+        boolean isAce = false;
+        for (int i = 0; i < cards.size(); i++) {
+            switch (cards.get(i).substring(0, 1)) {
+                case "T":
+                    isTen = true;
+                    break;
+                case "J":
+                    isJack = true;
+                    break;
+                case "Q":
+                    isQueen = true;
+                    break;
+                case "K":
+                    isKing = true;
+                    break;
+                case "A":
+                    isAce = true;
+                    break;
+                default:
+                    break;
+            }
+        }
+        return isTen && isJack && isQueen && isKing && isAce;
     }
 
     private static boolean isStraightFlush(List<String> cards) {
+        // still not sure what straight means
         return false;
     }
 
     private static boolean isFourOfAKind(List<String> cards) {
+        for (int i = 0; i < 2; i++) {
+            int count = 1;
+            String value1 = cards.get(i).substring(0, 1);
+            for (int j = i + 1; j < cards.size(); j++) {
+                String value2 = cards.get(j).substring(0, 1);
+                if (value1.equals(value2)) {
+                    count++;
+                    if (count == 4) {
+                        return true;
+                    }
+                }
+            }
+        }
         return false;
     }
 
@@ -137,7 +208,7 @@ public class App {
                 }
             }
         }
-        // no three kind found
+        // early exit when three kind is not found
         if (threeKindValue.equals("DEFAULT_VALUE")) {
             return false;
         }
