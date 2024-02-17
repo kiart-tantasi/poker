@@ -9,11 +9,20 @@ import java.util.Scanner;
 
 public class App {
     public static void main(String[] args) {
-        // Scanner scanner = new Scanner(System.in);
-        // while (scanner.hasNextLine()) {
-        // compare(scanner.nextLine());
-        // }
-        // scanner.close();
+        Scanner scanner = new Scanner(System.in);
+        int win1 = 0;
+        int win2 = 0;
+        while (scanner.hasNextLine()) {
+            int winner = compare(scanner.nextLine());
+            if (winner == 1) {
+                win1++;
+            }
+            if (winner == 2) {
+                win2++;
+            }
+        }
+        System.out.println("win 1 - " + win1 + ", win2 - " + win2);
+        scanner.close();
 
         // ===================== [TEST} ===================== //
 
@@ -83,23 +92,25 @@ public class App {
         // System.out.println("isPair:" + isPair(list));
     }
 
-    private static void compare(String line) {
-        List<String> player1 = new ArrayList<>();
-        List<String> player2 = new ArrayList<>();
+    private static int compare(String line) {
+        List<String> cards1 = new ArrayList<>();
+        List<String> cards2 = new ArrayList<>();
         String[] cards = line.split(" ");
         for (int i = 0; i < cards.length; i++) {
             if (i < cards.length / 2) {
-                player1.add(cards[i]);
+                cards1.add(cards[i]);
             } else {
-                player2.add(cards[i]);
+                cards2.add(cards[i]);
             }
         }
-        int rank1 = rank(player1);
-        int rank2 = rank(player2);
-
-        System.out.println(String.join(" ", player1));
-        System.out.println(String.join(" ", player2));
-        // TODO: get rank of p1 and p2
+        if (rank(cards1) > rank(cards2)) {
+            return 1;
+        }
+        if (rank(cards2) > rank(cards1)) {
+            return 2;
+        }
+        // tie case
+        return 0;
     }
 
     private static int rank(List<String> cards) {
