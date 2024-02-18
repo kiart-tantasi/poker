@@ -35,8 +35,7 @@ public class App {
                 tie++;
             }
         }
-        System.out.println("win 1 - " + win1 + ", win2 - " + win2 + ", tie - " +
-                tie);
+        System.out.println("win 1 - " + win1 + ", win2 - " + win2 + ", tie - " + tie);
         System.out.println("all rounds: " + (tie + win1 + win2));
         scanner.close();
     }
@@ -52,13 +51,56 @@ public class App {
                 cards2.add(cards[i]);
             }
         }
-        if (rank(cards1) > rank(cards2)) {
+        int rank1 = rank(cards1);
+        int rank2 = rank(cards2);
+        if (rank1 > rank2) {
             return 1;
         }
-        if (rank(cards2) > rank(cards1)) {
+        if (rank2 > rank1) {
             return 2;
         }
-        // tie case
+        return handleTie(rank1, cards1, cards2);
+    }
+
+    private static int handleTie(int rank, List<String> cards1, List<String> cards2) {
+        // NOTE: from "poker-handes.txt", tie is only found on rank 1, 2 and 3
+        if (rank == 8) {
+            return handleTieFourOfAKind();
+        }
+        if (rank == 7) {
+            return handleTieFullHouse();
+        }
+        if (rank == 4) {
+            return handleTieThreeOfAKind();
+        }
+        if (rank == 3) {
+            return handleTieTwoPairs();
+        }
+        if (rank == 2) {
+            // System.out.println("RANK 2: " + String.join(" ", cards1));
+            return handleTiePair();
+        }
+        // System.out.println("RANK 1: " + String.join(" ", cards1));
+        return 0;
+    }
+
+    private static int handleTieFourOfAKind() {
+        return 0;
+    }
+
+    private static int handleTieFullHouse() {
+        return 0;
+    }
+
+    private static int handleTieThreeOfAKind() {
+        return 0;
+    }
+
+    private static int handleTieTwoPairs() {
+        return 0;
+    }
+
+    private static int handleTiePair() {
         return 0;
     }
 
@@ -302,6 +344,7 @@ public class App {
     }
 
     // ======================= TEST UTILITIES =======================
+    // please run `java main/App.java test` to run tests
 
     private static void test() throws Exception {
         // isRoyalFlush
