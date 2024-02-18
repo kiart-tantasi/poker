@@ -3,9 +3,14 @@ version 11+
 
 # Development
 ```
-cat test.txt | java main/App.java
+cat poker-hands.txt | java main/App.java
 ```
-d
+
+# Testing
+```
+java main/App.java test
+```
+
 # Build
 ```
 javac main/App.java
