@@ -2,12 +2,11 @@ package main;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
-import java.util.stream.Collectors;
 
 public class App {
-    private static final String INITIAL_VALUE = "INITIAL_VALUE";
 
     public static void main(String[] args) {
         // ===================== [TEST] ===================== //
@@ -120,7 +119,7 @@ public class App {
     }
 
     private static List<String> sortPair(List<String> cards) {
-        String pairCard = INITIAL_VALUE;
+        String pairCard = null;
         List<String> found = new ArrayList<>();
         for (int i = 0; i < cards.size(); i++) {
             String value = cards.get(i).substring(0, 1);
@@ -131,15 +130,15 @@ public class App {
                 found.add(value);
             }
         }
-        if (pairCard.equals(INITIAL_VALUE)) {
+        if (pairCard == null) {
             return null;
         }
 
         final String pairCard_FINAL = pairCard;
-        ArrayList<String> withoutPair = cards.stream()
+        List<String> withoutPair = cards.stream()
                 .filter(card -> !card.equals(pairCard_FINAL))
-                .sorted((card1, card2) -> estimateCard(card2.substring(0, 1)) - estimateCard(card1.substring(0, 1)))
-                .collect(Collectors.toCollection(ArrayList::new));
+                .sorted(getSortCardsComparator())
+                .toList();
         List<String> result = new ArrayList<>();
         result.add(pairCard);
         result.addAll(withoutPair);
@@ -147,8 +146,8 @@ public class App {
     }
 
     private static int handleTieDefault(List<String> cards1, List<String> cards2) {
-        sortCards(cards1);
-        sortCards(cards2);
+        cards1.sort(getSortCardsComparator());
+        cards2.sort(getSortCardsComparator());
         for (int i = 0; i < cards1.size(); i++) {
             int value1 = estimateCard(cards1.get(i).substring(0, 1));
             int value2 = estimateCard(cards2.get(i).substring(0, 1));
@@ -162,8 +161,8 @@ public class App {
         return 0;
     }
 
-    private static void sortCards(List<String> cards) {
-        cards.sort((card1, card2) -> estimateCard(card2.substring(0, 1)) - estimateCard(card1.substring(0, 1)));
+    private static Comparator<String> getSortCardsComparator() {
+        return (card1, card2) -> estimateCard(card2.substring(0, 1)) - estimateCard(card1.substring(0, 1));
     }
 
     private static int rank(List<String> cards) {
@@ -242,7 +241,7 @@ public class App {
     }
 
     private static boolean isFullHouse(List<String> cards) {
-        String threeKindValue = INITIAL_VALUE;
+        String threeKindValue = null;
         for (int i = 0; i < 3; i++) {
             int count = 1;
             String value1 = cards.get(i).substring(0, 1);
@@ -256,7 +255,7 @@ public class App {
                 }
             }
         }
-        if (threeKindValue.equals(INITIAL_VALUE)) {
+        if (threeKindValue == null) {
             return false;
         }
         for (int i = 0; i < cards.size() - 1; i++) {
@@ -301,13 +300,13 @@ public class App {
     }
 
     private static boolean isTwoPairs(List<String> cards) {
-        String firstPair = INITIAL_VALUE;
+        String firstPair = null;
         int count = 0;
         for (int i = 0; i < cards.size(); i++) {
             String value1 = cards.get(i).substring(0, 1);
             for (int j = i + 1; j < cards.size(); j++) {
                 String value2 = cards.get(j).substring(0, 1);
-                if (value1.equals(value2) && !value1.equals(firstPair)) {
+                if (value1.equals(value2) && (firstPair == null || !value1.equals(firstPair))) {
                     count++;
                     if (count == 2) {
                         return true;
@@ -380,11 +379,11 @@ public class App {
             case "A":
                 return 13000;
             default:
-                return -999_999;
+                return -999999;
         }
     }
 
-    // ======================= TEST UTILITIES =======================
+    // ===================== TEST UTILITIES ===================== //
 
     private static void test() throws Exception {
         // isRoyalFlush
@@ -453,7 +452,7 @@ public class App {
         List<String> actual1 = Arrays
                 .asList(new String[] { "AS", "4S", "QS", "6S", "TH", "KH", "JH", "2H", "8C", "5C", "3D", "7D", "9S", });
         String[] expected1 = new String[] { "A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2", "1" };
-        sortCards(actual1);
+        actual1.sort(getSortCardsComparator());
         for (int i = 0; i < actual1.size(); i++) {
             assertEqual(expected1[i], actual1.get(i).substring(0, 1));
         }
