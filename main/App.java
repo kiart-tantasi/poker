@@ -7,6 +7,8 @@ import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class App {
+    private static final String INITIAL_VALUE = "INITIAL_VALUE";
+
     public static void main(String[] args) {
         // ===================== [TEST] ===================== //
         if (args.length == 1 && args[0].equals("test")) {
@@ -34,6 +36,7 @@ public class App {
                     win2++;
                     break;
                 case 0:
+                    System.out.println("there is a tie !");
                     tie++;
                     break;
                 default:
@@ -113,12 +116,11 @@ public class App {
                 return 2;
             }
         }
-        System.out.println("pair and higests values are the same");
         return 0;
     }
 
     private static List<String> sortPair(List<String> cards) {
-        String pairCard = "INITIAL_VALUE";
+        String pairCard = INITIAL_VALUE;
         List<String> found = new ArrayList<>();
         for (int i = 0; i < cards.size(); i++) {
             String value = cards.get(i).substring(0, 1);
@@ -129,8 +131,7 @@ public class App {
                 found.add(value);
             }
         }
-        if (pairCard.equals("INITIAL_VALUE")) {
-            System.out.println("pair is not found");
+        if (pairCard.equals(INITIAL_VALUE)) {
             return null;
         }
 
@@ -158,7 +159,6 @@ public class App {
                 return 2;
             }
         }
-        System.out.println("all higest cards are the same");
         return 0;
     }
 
@@ -198,12 +198,8 @@ public class App {
     }
 
     private static boolean isRoyalFlush(List<String> cards) {
-        String firstSuite = cards.get(0).substring(1, 2);
-        for (int i = 1; i < cards.size(); i++) {
-            String currentSuite = cards.get(i).substring(1, 2);
-            if (!firstSuite.equals(currentSuite)) {
-                return false;
-            }
+        if (!isFlush(cards)) {
+            return false;
         }
         boolean isTen = false;
         boolean isJack = false;
@@ -242,25 +238,11 @@ public class App {
     }
 
     private static boolean isFourOfAKind(List<String> cards) {
-        for (int i = 0; i < 2; i++) {
-            int count = 1;
-            String value1 = cards.get(i).substring(0, 1);
-            for (int j = i + 1; j < cards.size(); j++) {
-                String value2 = cards.get(j).substring(0, 1);
-                if (value1.equals(value2)) {
-                    count++;
-                    if (count == 4) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
+        return isXOfAKind(cards, 4);
     }
 
     private static boolean isFullHouse(List<String> cards) {
-        String threeKindValue = "INITIAL_VALUE";
-        // find three kind
+        String threeKindValue = INITIAL_VALUE;
         for (int i = 0; i < 3; i++) {
             int count = 1;
             String value1 = cards.get(i).substring(0, 1);
@@ -274,11 +256,9 @@ public class App {
                 }
             }
         }
-        // early exit when three kind is not found
-        if (threeKindValue.equals("INITIAL_VALUE")) {
+        if (threeKindValue.equals(INITIAL_VALUE)) {
             return false;
         }
-        // find a pair
         for (int i = 0; i < cards.size() - 1; i++) {
             String value1 = cards.get(i).substring(0, 1);
             if (value1.equals(threeKindValue)) {
@@ -317,24 +297,11 @@ public class App {
     }
 
     private static boolean isThreeOfAKind(List<String> cards) {
-        for (int i = 0; i < 3; i++) {
-            int count = 1;
-            String value1 = cards.get(i).substring(0, 1);
-            for (int j = i + 1; j < cards.size(); j++) {
-                String value2 = cards.get(j).substring(0, 1);
-                if (value1.equals(value2)) {
-                    count++;
-                    if (count == 3) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
+        return isXOfAKind(cards, 3);
     }
 
     private static boolean isTwoPairs(List<String> cards) {
-        String firstPair = "INITIAL_VALUE";
+        String firstPair = INITIAL_VALUE;
         int count = 0;
         for (int i = 0; i < cards.size(); i++) {
             String value1 = cards.get(i).substring(0, 1);
@@ -360,6 +327,23 @@ public class App {
                 String value2 = cards.get(j).substring(0, 1);
                 if (value1.equals(value2)) {
                     return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean isXOfAKind(List<String> cards, int x) {
+        for (int i = 0; i < (cards.size() - x + 1); i++) {
+            int count = 1;
+            String value1 = cards.get(i).substring(0, 1);
+            for (int j = i + 1; j < cards.size(); j++) {
+                String value2 = cards.get(j).substring(0, 1);
+                if (value1.equals(value2)) {
+                    count++;
+                    if (count == x) {
+                        return true;
+                    }
                 }
             }
         }
@@ -396,7 +380,6 @@ public class App {
             case "A":
                 return 13000;
             default:
-                System.out.println("card value is invalid");
                 return -999_999;
         }
     }
