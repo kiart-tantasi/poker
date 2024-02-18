@@ -2,16 +2,27 @@ package main;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 
 public class App {
     public static void main(String[] args) {
+        // ===================== [TEST] ===================== //
+        if (args.length == 1 && args[0].equals("test")) {
+            try {
+                test();
+                System.out.println("All tests passed");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return;
+        }
+
+        // ===================== [APP] ===================== //
         Scanner scanner = new Scanner(System.in);
         int win1 = 0;
         int win2 = 0;
+        int tie = 0;
         while (scanner.hasNextLine()) {
             int winner = compare(scanner.nextLine());
             if (winner == 1) {
@@ -20,76 +31,14 @@ public class App {
             if (winner == 2) {
                 win2++;
             }
+            if (winner == 0) {
+                tie++;
+            }
         }
-        System.out.println("win 1 - " + win1 + ", win2 - " + win2);
+        System.out.println("win 1 - " + win1 + ", win2 - " + win2 + ", tie - " +
+                tie);
+        System.out.println("all rounds: " + (tie + win1 + win2));
         scanner.close();
-
-        // ===================== [TEST} ===================== //
-
-        // test isRoyalFlush
-        // List<String> list = new ArrayList<>(Arrays.asList(new String[] { "TD", "JD",
-        // "QD", "KD", "AD" }));
-        // System.out.println("isRoyalFlush:" + isRoyalFlush(list));
-        // list = new ArrayList<>(Arrays.asList(new String[] { "TD", "JS", "QD", "KD",
-        // "AD" }));
-        // System.out.println("isRoyalFlush:" + isRoyalFlush(list));
-        // list = new ArrayList<>(Arrays.asList(new String[] { "3D", "JD", "QD", "KD",
-        // "AD" }));
-        // System.out.println("isRoyalFlush:" + isRoyalFlush(list));
-
-        // test isFourOfAKind
-        // List<String> list = new ArrayList<>(Arrays.asList(new String[] { "2D", "1D",
-        // "1D", "1D", "1D" }));
-        // System.out.println("isFourOfAKind:" + isFourOfAKind(list));
-        // list = new ArrayList<>(Arrays.asList(new String[] { "2D", "2D", "1D", "1D",
-        // "1D" }));
-        // System.out.println("isFourOfAKind:" + isFourOfAKind(list));
-
-        // test isFullHouse
-        // List<String> list = new ArrayList<>(Arrays.asList(new String[] { "1D", "1D",
-        // "1D", "2D", "2D" }));
-        // System.out.println("isFullHouse:" + isFullHouse(list));
-        // list = new ArrayList<>(Arrays.asList(new String[] { "1C", "1D", "1D", "2D",
-        // "3D" }));
-        // System.out.println("isFullHouse:" + isFullHouse(list));
-        // list = new ArrayList<>(Arrays.asList(new String[] { "1C", "1D", "2D", "2D",
-        // "3D" }));
-        // System.out.println("isFullHouse:" + isFullHouse(list));
-
-        // test isFlush
-        // List<String> list = new ArrayList<>(Arrays.asList(new String[] { "1D", "6D",
-        // "2D", "3D", "4D" }));
-        // System.out.println("isFlush:" + isFlush(list));
-        // list = new ArrayList<>(Arrays.asList(new String[] { "1C", "6D", "2D", "3D",
-        // "4D" }));
-        // System.out.println("isFlush:" + isFlush(list));
-
-        // test isThreeOfAKind
-        // List<String> list = new ArrayList<>(Arrays.asList(new String[] { "1D", "2D",
-        // "3D", "3D", "3D" }));
-        // System.out.println("isThreeOfAKind: " + isThreeOfAKind(list));
-        // list = new ArrayList<>(Arrays.asList(new String[] { "1D", "2D", "3D", "4D",
-        // "5D" }));
-        // System.out.println("isThreeOfAKind: " + isThreeOfAKind(list));
-
-        // test isTwoPairs
-        // List<String> list = new ArrayList<>(Arrays.asList(new String[] { "1D", "1D",
-        // "2D", "2D", "4D" }));
-        // System.out.println("isTwoPairs:" + isTwoPairs(list));
-        // list = new ArrayList<>(Arrays.asList(new String[] { "1D", "1D", "1D", "1D",
-        // "2D" }));
-        // System.out.println("isTwoPairs:" + isTwoPairs(list));
-        // list = new ArrayList<>(Arrays.asList(new String[] { "1D", "2D", "3D", "4D",
-        // "5D" }));
-        // System.out.println("isTwoPairs:" + isTwoPairs(list));
-
-        // test isPairs
-        // List<String> list = new ArrayList<>(Arrays.asList(new String[] { "1D", "2D",
-        // "3D", "4D", "4D" }));
-        // System.out.println("isPair:" + isPair(list));
-        // list = new ArrayList<>(Arrays.asList(new String[] { "1D", "2D", "3D", "4D",
-        // "5D" }));
-        // System.out.println("isPair:" + isPair(list));
     }
 
     private static int compare(String line) {
@@ -182,7 +131,9 @@ public class App {
     }
 
     private static boolean isStraightFlush(List<String> cards) {
-        // still not sure what straight means
+        if (isFlush(cards) && isStraight(cards)) {
+            return true;
+        }
         return false;
     }
 
@@ -204,7 +155,7 @@ public class App {
     }
 
     private static boolean isFullHouse(List<String> cards) {
-        String threeKindValue = "DEFAULT_VALUE";
+        String threeKindValue = "INITIAL_VALUE";
         // find three kind
         for (int i = 0; i < 3; i++) {
             int count = 1;
@@ -220,7 +171,7 @@ public class App {
             }
         }
         // early exit when three kind is not found
-        if (threeKindValue.equals("DEFAULT_VALUE")) {
+        if (threeKindValue.equals("INITIAL_VALUE")) {
             return false;
         }
         // find a pair
@@ -250,13 +201,20 @@ public class App {
         return true;
     }
 
+    // not fully understand what straight means
+    // Are all of below straight ?
+    // 1 2 3 4 5
+    // 5 4 3 2 1
+    // 1 2 5 4 3
     private static boolean isStraight(List<String> cards) {
-        // not fully understand what straight means
-        // Are all of below straight ?
-        // 1 2 3 4 5
-        // 5 4 3 2 1
-        // 1 2 5 4 3
-        return false;
+        int firstDiff = estimateCard(cards.get(0)) - estimateCard(cards.get(1));
+        for (int i = 1; i < cards.size() - 1; i++) {
+            int currentDiff = estimateCard(cards.get(i)) - estimateCard(cards.get(i + 1));
+            if (currentDiff != firstDiff) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private static boolean isThreeOfAKind(List<String> cards) {
@@ -277,7 +235,7 @@ public class App {
     }
 
     private static boolean isTwoPairs(List<String> cards) {
-        String firstPair = "DEFAULT_VALUE";
+        String firstPair = "INITIAL_VALUE";
         int count = 0;
         for (int i = 0; i < cards.size(); i++) {
             String value1 = cards.get(i).substring(0, 1);
@@ -307,5 +265,129 @@ public class App {
             }
         }
         return false;
+    }
+
+    private static int estimateCard(String card) {
+        String value = card.substring(0, 1);
+        switch (value) {
+            case "2":
+                return 1000;
+            case "3":
+                return 2000;
+            case "4":
+                return 3000;
+            case "5":
+                return 4000;
+            case "6":
+                return 5000;
+            case "7":
+                return 6000;
+            case "8":
+                return 7000;
+            case "9":
+                return 8000;
+            case "T":
+                return 9000;
+            case "J":
+                return 10_000;
+            case "Q":
+                return 11_000;
+            case "K":
+                return 12_000;
+            case "A":
+                return 13_000;
+            default:
+                return -1;
+        }
+    }
+
+    // ======================= TEST UTILITIES =======================
+
+    private static void test() throws Exception {
+        List<String> list = new ArrayList<>();
+
+        // isRoyalFlush
+        list = new ArrayList<>(Arrays.asList(new String[] { "TD", "JD", "QD", "KD", "AD" }));
+        assertTrue(isRoyalFlush(list));
+        list = new ArrayList<>(Arrays.asList(new String[] { "TD", "JS", "QD", "KD", "AD" }));
+        assertFalse(isRoyalFlush(list));
+        list = new ArrayList<>(Arrays.asList(new String[] { "3D", "JD", "QD", "KD", "AD" }));
+        assertFalse(isRoyalFlush(list));
+
+        // isStraightFlush
+        list = new ArrayList<>(Arrays.asList(new String[] { "8D", "9D", "TD", "JD", "QD" }));
+        assertTrue(isStraightFlush(list));
+        list = new ArrayList<>(Arrays.asList(new String[] { "QD", "JD", "TD", "9D", "8D" }));
+        assertTrue(isStraightFlush(list));
+        list = new ArrayList<>(Arrays.asList(new String[] { "8S", "9D", "TD", "JD", "QD" }));
+        assertFalse(isStraightFlush(list));
+        list = new ArrayList<>(Arrays.asList(new String[] { "QS", "JD", "TD", "9D", "8D" }));
+        assertFalse(isStraightFlush(list));
+        list = new ArrayList<>(Arrays.asList(new String[] { "TD", "JD", "QD", "8D", "9D" }));
+        assertFalse(isStraightFlush(list));
+        list = new ArrayList<>(Arrays.asList(new String[] { "9D", "8D", "QD", "JD", "TD" }));
+        assertFalse(isStraightFlush(list));
+
+        // isFourOfAKind
+        list = new ArrayList<>(Arrays.asList(new String[] { "2D", "1D", "1D", "1D", "1D" }));
+        assertTrue(isFourOfAKind(list));
+        list = new ArrayList<>(Arrays.asList(new String[] { "2D", "2D", "1D", "1D", "1D" }));
+        assertFalse(isFourOfAKind(list));
+
+        // isFullHouse
+        list = new ArrayList<>(Arrays.asList(new String[] { "1D", "1D", "1D", "2D", "2D" }));
+        assertTrue(isFullHouse(list));
+        list = new ArrayList<>(Arrays.asList(new String[] { "1C", "1D", "1D", "2D", "3D" }));
+        assertFalse(isFullHouse(list));
+        list = new ArrayList<>(Arrays.asList(new String[] { "1C", "1D", "2D", "2D", "3D" }));
+        assertFalse(isFullHouse(list));
+
+        // isFlush
+        list = new ArrayList<>(Arrays.asList(new String[] { "1D", "6D", "2D", "3D", "4D" }));
+        assertTrue(isFlush(list));
+        list = new ArrayList<>(Arrays.asList(new String[] { "1C", "6D", "2D", "3D", "4D" }));
+        assertFalse(isFlush(list));
+
+        // isStraight
+        list = new ArrayList<>(Arrays.asList(new String[] { "8D", "9D", "TD", "JD", "QD" }));
+        assertTrue(isStraight(list));
+        list = new ArrayList<>(Arrays.asList(new String[] { "QD", "JD", "TD", "9D", "8D" }));
+        assertTrue(isStraight(list));
+        list = new ArrayList<>(Arrays.asList(new String[] { "TD", "JD", "QD", "8D", "9D" }));
+        assertFalse(isStraight(list));
+        list = new ArrayList<>(Arrays.asList(new String[] { "9D", "8D", "QD", "JD", "TD" }));
+        assertFalse(isStraight(list));
+
+        // isThreeOfAKind
+        list = new ArrayList<>(Arrays.asList(new String[] { "1D", "2D", "3D", "3D", "3D" }));
+        assertTrue(isThreeOfAKind(list));
+        list = new ArrayList<>(Arrays.asList(new String[] { "1D", "2D", "3D", "4D", "5D" }));
+        assertFalse(isThreeOfAKind(list));
+
+        // isTwoPairs
+        list = new ArrayList<>(Arrays.asList(new String[] { "1D", "1D", "2D", "2D", "4D" }));
+        assertTrue(isTwoPairs(list));
+        list = new ArrayList<>(Arrays.asList(new String[] { "1D", "1D", "1D", "1D", "2D" }));
+        assertFalse(isTwoPairs(list));
+        list = new ArrayList<>(Arrays.asList(new String[] { "1D", "2D", "3D", "4D", "5D" }));
+        assertFalse(isTwoPairs(list));
+
+        // isPairs
+        list = new ArrayList<>(Arrays.asList(new String[] { "1D", "2D", "3D", "4D", "4D" }));
+        assertTrue(isPair(list));
+        list = new ArrayList<>(Arrays.asList(new String[] { "1D", "2D", "3D", "4D", "5D" }));
+        assertFalse(isPair(list));
+    }
+
+    private static void assertTrue(boolean statement) throws Exception {
+        if (!statement) {
+            throw new Exception("FAILED");
+        }
+    }
+
+    private static void assertFalse(boolean statement) throws Exception {
+        if (statement) {
+            throw new Exception("FAILED");
+        }
     }
 }
