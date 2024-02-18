@@ -304,79 +304,50 @@ public class App {
     // ======================= TEST UTILITIES =======================
 
     private static void test() throws Exception {
-        List<String> list = new ArrayList<>();
-
         // isRoyalFlush
-        list = new ArrayList<>(Arrays.asList(new String[] { "TD", "JD", "QD", "KD", "AD" }));
-        assertTrue(isRoyalFlush(list));
-        list = new ArrayList<>(Arrays.asList(new String[] { "TD", "JS", "QD", "KD", "AD" }));
-        assertFalse(isRoyalFlush(list));
-        list = new ArrayList<>(Arrays.asList(new String[] { "3D", "JD", "QD", "KD", "AD" }));
-        assertFalse(isRoyalFlush(list));
+        assertTrue(isRoyalFlush(Arrays.asList(new String[] { "TD", "JD", "QD", "KD", "AD" })));
+        assertFalse(isRoyalFlush(Arrays.asList(new String[] { "TD", "JS", "QD", "KD", "AD" })));
+        assertFalse(isRoyalFlush(Arrays.asList(new String[] { "3D", "JD", "QD", "KD", "AD" })));
 
         // isStraightFlush
-        list = new ArrayList<>(Arrays.asList(new String[] { "8D", "9D", "TD", "JD", "QD" }));
-        assertTrue(isStraightFlush(list));
-        list = new ArrayList<>(Arrays.asList(new String[] { "QD", "JD", "TD", "9D", "8D" }));
-        assertTrue(isStraightFlush(list));
-        list = new ArrayList<>(Arrays.asList(new String[] { "8S", "9D", "TD", "JD", "QD" }));
-        assertFalse(isStraightFlush(list));
-        list = new ArrayList<>(Arrays.asList(new String[] { "QS", "JD", "TD", "9D", "8D" }));
-        assertFalse(isStraightFlush(list));
-        list = new ArrayList<>(Arrays.asList(new String[] { "TD", "JD", "QD", "8D", "9D" }));
-        assertFalse(isStraightFlush(list));
-        list = new ArrayList<>(Arrays.asList(new String[] { "9D", "8D", "QD", "JD", "TD" }));
-        assertFalse(isStraightFlush(list));
+        assertTrue(isStraightFlush(Arrays.asList(new String[] { "8D", "9D", "TD", "JD", "QD" })));
+        assertTrue(isStraightFlush(Arrays.asList(new String[] { "QD", "JD", "TD", "9D", "8D" })));
+        assertFalse(isStraightFlush(Arrays.asList(new String[] { "8S", "9D", "TD", "JD", "QD" })));
+        assertFalse(isStraightFlush(Arrays.asList(new String[] { "QS", "JD", "TD", "9D", "8D" })));
+        assertFalse(isStraightFlush(Arrays.asList(new String[] { "TD", "JD", "QD", "8D", "9D" })));
+        assertFalse(isStraightFlush(Arrays.asList(new String[] { "9D", "8D", "QD", "JD", "TD" })));
 
         // isFourOfAKind
-        list = new ArrayList<>(Arrays.asList(new String[] { "2D", "1D", "1D", "1D", "1D" }));
-        assertTrue(isFourOfAKind(list));
-        list = new ArrayList<>(Arrays.asList(new String[] { "2D", "2D", "1D", "1D", "1D" }));
-        assertFalse(isFourOfAKind(list));
+        assertTrue(isFourOfAKind(Arrays.asList(new String[] { "2D", "3D", "3D", "3D", "3D" })));
+        assertFalse(isFourOfAKind(Arrays.asList(new String[] { "2D", "2D", "3D", "3D", "3D" })));
 
         // isFullHouse
-        list = new ArrayList<>(Arrays.asList(new String[] { "1D", "1D", "1D", "2D", "2D" }));
-        assertTrue(isFullHouse(list));
-        list = new ArrayList<>(Arrays.asList(new String[] { "1C", "1D", "1D", "2D", "3D" }));
-        assertFalse(isFullHouse(list));
-        list = new ArrayList<>(Arrays.asList(new String[] { "1C", "1D", "2D", "2D", "3D" }));
-        assertFalse(isFullHouse(list));
+        assertTrue(isFullHouse(Arrays.asList(new String[] { "3D", "3D", "3D", "2D", "2D" })));
+        assertFalse(isFullHouse(Arrays.asList(new String[] { "3C", "3D", "3D", "3D", "2D" })));
+        assertFalse(isFullHouse(Arrays.asList(new String[] { "3C", "4D", "4D", "5D", "5D" })));
 
         // isFlush
-        list = new ArrayList<>(Arrays.asList(new String[] { "1D", "6D", "2D", "3D", "4D" }));
-        assertTrue(isFlush(list));
-        list = new ArrayList<>(Arrays.asList(new String[] { "1C", "6D", "2D", "3D", "4D" }));
-        assertFalse(isFlush(list));
+        assertTrue(isFlush(Arrays.asList(new String[] { "5D", "6D", "2D", "3D", "4D" })));
+        assertFalse(isFlush(Arrays.asList(new String[] { "5C", "6D", "2D", "3D", "4D" })));
 
         // isStraight
-        list = new ArrayList<>(Arrays.asList(new String[] { "8D", "9D", "TD", "JD", "QD" }));
-        assertTrue(isStraight(list));
-        list = new ArrayList<>(Arrays.asList(new String[] { "QD", "JD", "TD", "9D", "8D" }));
-        assertTrue(isStraight(list));
-        list = new ArrayList<>(Arrays.asList(new String[] { "TD", "JD", "QD", "8D", "9D" }));
-        assertFalse(isStraight(list));
-        list = new ArrayList<>(Arrays.asList(new String[] { "9D", "8D", "QD", "JD", "TD" }));
-        assertFalse(isStraight(list));
+        assertTrue(isStraight(Arrays.asList(new String[] { "8D", "9D", "TD", "JD", "QD" })));
+        assertTrue(isStraight(Arrays.asList(new String[] { "QD", "JD", "TD", "9D", "8D" })));
+        assertFalse(isStraight(Arrays.asList(new String[] { "TD", "JD", "QD", "8D", "9D" })));
+        assertFalse(isStraight(Arrays.asList(new String[] { "9D", "8D", "QD", "JD", "TD" })));
 
         // isThreeOfAKind
-        list = new ArrayList<>(Arrays.asList(new String[] { "1D", "2D", "3D", "3D", "3D" }));
-        assertTrue(isThreeOfAKind(list));
-        list = new ArrayList<>(Arrays.asList(new String[] { "1D", "2D", "3D", "4D", "5D" }));
-        assertFalse(isThreeOfAKind(list));
+        assertTrue(isThreeOfAKind(Arrays.asList(new String[] { "4D", "5D", "3D", "3D", "3D" })));
+        assertFalse(isThreeOfAKind(Arrays.asList(new String[] { "4D", "5D", "6D", "3D", "3D" })));
 
         // isTwoPairs
-        list = new ArrayList<>(Arrays.asList(new String[] { "1D", "1D", "2D", "2D", "4D" }));
-        assertTrue(isTwoPairs(list));
-        list = new ArrayList<>(Arrays.asList(new String[] { "1D", "1D", "1D", "1D", "2D" }));
-        assertFalse(isTwoPairs(list));
-        list = new ArrayList<>(Arrays.asList(new String[] { "1D", "2D", "3D", "4D", "5D" }));
-        assertFalse(isTwoPairs(list));
+        assertTrue(isTwoPairs(Arrays.asList(new String[] { "3D", "3D", "4D", "4D", "5D" })));
+        assertFalse(isTwoPairs(Arrays.asList(new String[] { "3D", "3D", "3D", "3D", "5D" })));
+        assertFalse(isTwoPairs(Arrays.asList(new String[] { "1D", "2D", "3D", "4D", "5D" })));
 
         // isPairs
-        list = new ArrayList<>(Arrays.asList(new String[] { "1D", "2D", "3D", "4D", "4D" }));
-        assertTrue(isPair(list));
-        list = new ArrayList<>(Arrays.asList(new String[] { "1D", "2D", "3D", "4D", "5D" }));
-        assertFalse(isPair(list));
+        assertTrue(isPair(Arrays.asList(new String[] { "2D", "2D", "4D", "5D", "6D" })));
+        assertFalse(isPair(Arrays.asList(new String[] { "2D", "3D", "4D", "5D", "6D" })));
     }
 
     private static void assertTrue(boolean statement) throws Exception {
