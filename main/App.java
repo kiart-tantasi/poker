@@ -64,24 +64,22 @@ public class App {
 
     private static int handleTie(int rank, List<String> cards1, List<String> cards2) {
         // NOTE: from "poker-handes.txt", tie is only found on rank 1, 2 and 3
-        if (rank == 8) {
-            return handleTieFourOfAKind();
+        switch (rank) {
+            case 8:
+                return handleTieFourOfAKind();
+            case 7:
+                return handleTieFullHouse();
+            case 4:
+                return handleTieThreeOfAKind();
+            case 3:
+                return handleTieTwoPairs();
+            case 2:
+                // System.out.println("RANK 2: " + String.join(" ", cards1));
+                return handleTiePair();
+            default:
+                // System.out.println("RANK 1: " + String.join(" ", cards1));
+                return 0;
         }
-        if (rank == 7) {
-            return handleTieFullHouse();
-        }
-        if (rank == 4) {
-            return handleTieThreeOfAKind();
-        }
-        if (rank == 3) {
-            return handleTieTwoPairs();
-        }
-        if (rank == 2) {
-            // System.out.println("RANK 2: " + String.join(" ", cards1));
-            return handleTiePair();
-        }
-        // System.out.println("RANK 1: " + String.join(" ", cards1));
-        return 0;
     }
 
     private static int handleTieFourOfAKind() {
