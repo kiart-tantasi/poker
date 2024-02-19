@@ -3,7 +3,9 @@ package main;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
@@ -290,11 +292,11 @@ public class App {
     private static int handleTie(int rank, List<String> cards1, List<String> cards2) {
         switch (rank) {
             case 8:
-                return handleTieFourOfAKind();
+                return handleTieFourOfAKind(cards1, cards2);
             case 7:
-                return handleTieFullHouse();
+                return handleTieFullHouse(cards1, cards2);
             case 4:
-                return handleTieThreeOfAKind();
+                return handleTieThreeOfAKind(cards1, cards2);
             case 3:
                 return handleTieTwoPairs(cards1, cards2);
             case 2:
@@ -304,16 +306,22 @@ public class App {
         }
     }
 
-    private static int handleTieFourOfAKind() {
-        return 0;
+    private static int handleTieFourOfAKind(List<String> cards1, List<String> cards2) {
+        cards1 = sortFourOfAKind(cards1);
+        cards2 = sortFourOfAKind(cards2);
+        return compareOneByOne(cards1, cards2);
     }
 
-    private static int handleTieFullHouse() {
-        return 0;
+    private static int handleTieFullHouse(List<String> cards1, List<String> cards2) {
+        cards1 = sortFullHouse(cards1);
+        cards2 = sortFullHouse(cards2);
+        return compareOneByOne(cards1, cards2);
     }
 
-    private static int handleTieThreeOfAKind() {
-        return 0;
+    private static int handleTieThreeOfAKind(List<String> cards1, List<String> cards2) {
+        cards1 = sortThreeOfAKind(cards1);
+        cards2 = sortThreeOfAKind(cards2);
+        return compareOneByOne(cards1, cards2);
     }
 
     private static int handleTieTwoPairs(List<String> cards1, List<String> cards2) {
@@ -350,62 +358,54 @@ public class App {
 
     // ===================== SORT UTILITIES ===================== //
 
+    private static List<String> sortFourOfAKind(List<String> cards) {
+        List<String> result = new ArrayList<>();
+        result.addAll(extractTargetsAndSort(cards, 4));
+        result.addAll(extractTargetsAndSort(cards, 1));
+        return result;
+    }
+
+    private static List<String> sortFullHouse(List<String> cards) {
+        List<String> result = new ArrayList<>();
+        result.addAll(extractTargetsAndSort(cards, 3));
+        result.addAll(extractTargetsAndSort(cards, 2));
+        return result;
+    }
+
+    private static List<String> sortThreeOfAKind(List<String> cards) {
+        List<String> result = new ArrayList<>();
+        result.addAll(extractTargetsAndSort(cards, 3));
+        result.addAll(extractTargetsAndSort(cards, 1));
+        return result;
+    }
+
     private static List<String> sortTwoPairs(List<String> cards) {
-        List<String> twoPairs = new ArrayList<>();
-        List<String> found = new ArrayList<>();
-        for (int i = 0; i < cards.size(); i++) {
-            String value = cards.get(i).substring(0, 1);
-            if (found.contains(value)) {
-                if (!twoPairs.contains(value)) {
-                    twoPairs.add(value);
-                }
-            } else {
-                found.add(value);
-            }
-        }
-        if (twoPairs.size() != 2) {
-            return null;
-        }
-        twoPairs.sort(getSortCardsComparator());
-        String single = cards.stream()
-                .filter(card -> !twoPairs.contains(card.substring(0, 1)))
-                .findFirst()
-                .orElseThrow();
-        twoPairs.sort(getSortCardsComparator());
-        List<String> sorted = new ArrayList<>();
-        sorted.addAll(twoPairs);
-        sorted.add(single);
-        return sorted;
+        List<String> result = new ArrayList<>();
+        result.addAll(extractTargetsAndSort(cards, 2));
+        result.addAll(extractTargetsAndSort(cards, 1));
+        return result;
     }
 
     private static List<String> sortPair(List<String> cards) {
-        String pairCard = null;
-        List<String> found = new ArrayList<>();
-        for (int i = 0; i < cards.size(); i++) {
-            String value = cards.get(i).substring(0, 1);
-            if (found.contains(value)) {
-                pairCard = cards.get(i);
-                break;
-            } else {
-                found.add(value);
-            }
-        }
-        if (pairCard == null) {
-            return null;
-        }
-        final String pairCard_FINAL = pairCard;
-        List<String> withoutPair = cards.stream()
-                .filter(card -> !card.equals(pairCard_FINAL))
-                .sorted(getSortCardsComparator())
-                .collect(Collectors.toList());
         List<String> result = new ArrayList<>();
-        result.add(pairCard);
-        result.addAll(withoutPair);
+        result.addAll(extractTargetsAndSort(cards, 2));
+        result.addAll(extractTargetsAndSort(cards, 1));
         return result;
     }
 
     private static Comparator<String> getSortCardsComparator() {
         return (card1, card2) -> estimateCard(card2.substring(0, 1)) - estimateCard(card1.substring(0, 1));
+    }
+
+    private static List<String> extractTargetsAndSort(List<String> cards, int target) {
+        Map<String, Integer> map = new HashMap<>();
+        for (int i = 0; i < cards.size(); i++) {
+            String value = cards.get(i).substring(0, 1);
+            map.compute(value, (key, count) -> count == null ? 1 : count + 1);
+        }
+        return map
+                .entrySet().stream().filter((entry -> entry.getValue() == target))
+                .map(e -> e.getKey()).sorted(getSortCardsComparator()).collect(Collectors.toList());
     }
 
     // ===================== TEST UTILITIES ===================== //
@@ -466,7 +466,31 @@ public class App {
         assertFalse(isPair(Arrays.asList(new String[] { "2D", "3D", "4D", "5D", "6D" })));
         assertFalse(isPair(Arrays.asList(new String[] { "TC", "QD", "4H", "JD", "6S" })));
 
-        // handleTwoPairs
+        // handleTieFourOfAKind
+        assertEqual(1, handleTieFourOfAKind(
+                Arrays.asList(new String[] { "5D", "5D", "5D", "5D", "3D" }),
+                Arrays.asList(new String[] { "4D", "4D", "4D", "4D", "AD" })));
+        assertEqual(2, handleTieFourOfAKind(
+                Arrays.asList(new String[] { "AD", "5D", "5D", "5D", "5D" }),
+                Arrays.asList(new String[] { "3D", "KD", "KD", "KD", "KD" })));
+
+        // handleTieFullHouse
+        assertEqual(1, handleTieFullHouse(
+                Arrays.asList(new String[] { "5D", "5D", "5D", "2D", "2D" }),
+                Arrays.asList(new String[] { "4D", "4D", "4D", "3D", "3D" })));
+        assertEqual(2, handleTieFullHouse(
+                Arrays.asList(new String[] { "AD", "AD", "5D", "5D", "5D" }),
+                Arrays.asList(new String[] { "3D", "3D", "6D", "6D", "6D" })));
+
+        // handleTieThreeOfAKind
+        assertEqual(1, handleTieThreeOfAKind(
+                Arrays.asList(new String[] { "5D", "5D", "5D", "1D", "2D" }),
+                Arrays.asList(new String[] { "4D", "4D", "4D", "2D", "3D" })));
+        assertEqual(2, handleTieThreeOfAKind(
+                Arrays.asList(new String[] { "AD", "KD", "5D", "5D", "5D" }),
+                Arrays.asList(new String[] { "3D", "4D", "6D", "6D", "6D" })));
+
+        // handleTieTwoPairs
         assertEqual(1, handleTieTwoPairs(
                 Arrays.asList(new String[] { "3D", "3D", "KD", "KD", "AD" }),
                 Arrays.asList(new String[] { "3D", "3D", "4D", "4D", "AD" })));
@@ -493,6 +517,27 @@ public class App {
         // prepare reusable actual and expected list
         List<String> actual;
         String[] expected;
+
+        // sortFourOfAKind
+        actual = sortFourOfAKind(Arrays.asList(new String[] { "3C", "3S", "3H", "3D", "AS" }));
+        expected = new String[] { "3", "A" };
+        for (int i = 0; i < actual.size(); i++) {
+            assertEqual(expected[i], actual.get(i).substring(0, 1));
+        }
+
+        // sortFullHouse
+        actual = sortFullHouse(Arrays.asList(new String[] { "5C", "5S", "5H", "KD", "KS" }));
+        expected = new String[] { "5", "K" };
+        for (int i = 0; i < actual.size(); i++) {
+            assertEqual(expected[i], actual.get(i).substring(0, 1));
+        }
+
+        // sortThreeOfAKind
+        actual = sortThreeOfAKind(Arrays.asList(new String[] { "TC", "TS", "TH", "5D", "KS" }));
+        expected = new String[] { "T", "K", "5" };
+        for (int i = 0; i < actual.size(); i++) {
+            assertEqual(expected[i], actual.get(i).substring(0, 1));
+        }
 
         // sortTwoPairs
         actual = sortTwoPairs(Arrays.asList(new String[] { "3C", "JS", "JH", "3D", "AS" }));
@@ -527,13 +572,35 @@ public class App {
         }
 
         // sortCards (some suits are not given)
-        List<String> actual4 = Arrays
+        actual = Arrays
                 .asList(new String[] { "A", "4", "Q", "6S", "T", "K", "JC", "2", "8", "5H", "3", "7D", "9", });
-        String[] expected4 = new String[] { "A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2", "1" };
-        actual4.sort(getSortCardsComparator());
-        for (int i = 0; i < actual4.size(); i++) {
-            assertEqual(expected4[i], actual4.get(i).substring(0, 1));
+        expected = new String[] { "A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2", "1" };
+        actual.sort(getSortCardsComparator());
+        for (int i = 0; i < actual.size(); i++) {
+            assertEqual(expected[i], actual.get(i).substring(0, 1));
         }
+
+        // extractTargetAndSort (target = 1)
+        actual = extractTargetsAndSort(Arrays.asList(new String[] { "AS", "AS", "3S", "4S", "5A" }), 1);
+        expected = new String[] { "5", "4", "3" };
+        for (int i = 0; i < actual.size(); i++) {
+            assertEqual(expected[i], actual.get(i).substring(0, 1));
+        }
+
+        // extractTargetAndSort (target = 2)
+        actual = extractTargetsAndSort(Arrays.asList(new String[] { "AS", "AS", "3S", "4S", "4A" }), 2);
+        expected = new String[] { "A", "4" };
+        for (int i = 0; i < actual.size(); i++) {
+            assertEqual(expected[i], actual.get(i).substring(0, 1));
+        }
+
+        // extractTargetAndSort (target = 2)
+        actual = extractTargetsAndSort(Arrays.asList(new String[] { "AS", "AS", "JS", "JS", "JD" }), 3);
+        expected = new String[] { "J" };
+        for (int i = 0; i < actual.size(); i++) {
+            assertEqual(expected[i], actual.get(i).substring(0, 1));
+        }
+
     }
 
     private static void assertTrue(boolean statement) throws Exception {
