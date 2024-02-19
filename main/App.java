@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class App {
 
@@ -24,10 +25,8 @@ public class App {
         Scanner scanner = new Scanner(System.in);
         int win1 = 0;
         int win2 = 0;
-        int tie = 0;
         while (scanner.hasNextLine()) {
-            int winner = compare(scanner.nextLine());
-            switch (winner) {
+            switch (comparePlayersCards(scanner.nextLine())) {
                 case 1:
                     win1++;
                     break;
@@ -36,17 +35,17 @@ public class App {
                     break;
                 case 0:
                     System.out.println("there is a tie !");
-                    tie++;
                     break;
                 default:
                     break;
             }
         }
-        System.out.println("win 1 - " + win1 + ", win2 - " + win2 + ", tie - " + tie);
+        System.out.println("Player 1: " + win1);
+        System.out.println("Player 2: " + win2);
         scanner.close();
     }
 
-    private static int compare(String line) {
+    private static int comparePlayersCards(String line) {
         List<String> cards1 = new ArrayList<>();
         List<String> cards2 = new ArrayList<>();
         String[] cards = line.split(" ");
@@ -66,103 +65,6 @@ public class App {
             return 2;
         }
         return handleTie(rank1, cards1, cards2);
-    }
-
-    private static int handleTie(int rank, List<String> cards1, List<String> cards2) {
-        // NOTE: from "poker-handes.txt", tie is only found on rank 1, 2 and 3
-        switch (rank) {
-            case 8:
-                return handleTieFourOfAKind();
-            case 7:
-                return handleTieFullHouse();
-            case 4:
-                return handleTieThreeOfAKind();
-            case 3:
-                return handleTieTwoPairs();
-            case 2:
-                return handleTiePair(cards1, cards2);
-            default:
-                return handleTieDefault(cards1, cards2);
-        }
-    }
-
-    private static int handleTieFourOfAKind() {
-        return 0;
-    }
-
-    private static int handleTieFullHouse() {
-        return 0;
-    }
-
-    private static int handleTieThreeOfAKind() {
-        return 0;
-    }
-
-    private static int handleTieTwoPairs() {
-        return 0;
-    }
-
-    private static int handleTiePair(List<String> cards1, List<String> cards2) {
-        cards1 = sortPair(cards1);
-        cards2 = sortPair(cards2);
-        for (int i = 0; i < cards1.size(); i++) {
-            int value1 = estimateCard(cards1.get(i).substring(0, 1));
-            int value2 = estimateCard(cards2.get(i).substring(0, 1));
-            if (value1 > value2) {
-                return 1;
-            }
-            if (value2 > value1) {
-                return 2;
-            }
-        }
-        return 0;
-    }
-
-    private static List<String> sortPair(List<String> cards) {
-        String pairCard = null;
-        List<String> found = new ArrayList<>();
-        for (int i = 0; i < cards.size(); i++) {
-            String value = cards.get(i).substring(0, 1);
-            if (found.contains(value)) {
-                pairCard = cards.get(i);
-                break;
-            } else {
-                found.add(value);
-            }
-        }
-        if (pairCard == null) {
-            return null;
-        }
-
-        final String pairCard_FINAL = pairCard;
-        List<String> withoutPair = cards.stream()
-                .filter(card -> !card.equals(pairCard_FINAL))
-                .sorted(getSortCardsComparator())
-                .toList();
-        List<String> result = new ArrayList<>();
-        result.add(pairCard);
-        result.addAll(withoutPair);
-        return result;
-    }
-
-    private static int handleTieDefault(List<String> cards1, List<String> cards2) {
-        cards1.sort(getSortCardsComparator());
-        cards2.sort(getSortCardsComparator());
-        for (int i = 0; i < cards1.size(); i++) {
-            int value1 = estimateCard(cards1.get(i).substring(0, 1));
-            int value2 = estimateCard(cards2.get(i).substring(0, 1));
-            if (value1 > value2) {
-                return 1;
-            }
-            if (value2 > value1) {
-                return 2;
-            }
-        }
-        return 0;
-    }
-
-    private static Comparator<String> getSortCardsComparator() {
-        return (card1, card2) -> estimateCard(card2.substring(0, 1)) - estimateCard(card1.substring(0, 1));
     }
 
     private static int rank(List<String> cards) {
@@ -383,6 +285,129 @@ public class App {
         }
     }
 
+    // ===================== TIE UTILITIES ===================== //
+
+    private static int handleTie(int rank, List<String> cards1, List<String> cards2) {
+        switch (rank) {
+            case 8:
+                return handleTieFourOfAKind();
+            case 7:
+                return handleTieFullHouse();
+            case 4:
+                return handleTieThreeOfAKind();
+            case 3:
+                return handleTieTwoPairs(cards1, cards2);
+            case 2:
+                return handleTiePair(cards1, cards2);
+            default:
+                return handleTieDefault(cards1, cards2);
+        }
+    }
+
+    private static int handleTieFourOfAKind() {
+        return 0;
+    }
+
+    private static int handleTieFullHouse() {
+        return 0;
+    }
+
+    private static int handleTieThreeOfAKind() {
+        return 0;
+    }
+
+    private static int handleTieTwoPairs(List<String> cards1, List<String> cards2) {
+        cards1 = sortTwoPairs(cards1);
+        cards2 = sortTwoPairs(cards2);
+        return compareOneByOne(cards1, cards2);
+    }
+
+    private static int handleTiePair(List<String> cards1, List<String> cards2) {
+        cards1 = sortPair(cards1);
+        cards2 = sortPair(cards2);
+        return compareOneByOne(cards1, cards2);
+    }
+
+    private static int handleTieDefault(List<String> cards1, List<String> cards2) {
+        cards1.sort(getSortCardsComparator());
+        cards2.sort(getSortCardsComparator());
+        return compareOneByOne(cards1, cards2);
+    }
+
+    private static int compareOneByOne(List<String> cards1, List<String> cards2) {
+        for (int i = 0; i < cards1.size(); i++) {
+            int value1 = estimateCard(cards1.get(i).substring(0, 1));
+            int value2 = estimateCard(cards2.get(i).substring(0, 1));
+            if (value1 > value2) {
+                return 1;
+            }
+            if (value2 > value1) {
+                return 2;
+            }
+        }
+        return 0;
+    }
+
+    // ===================== SORT UTILITIES ===================== //
+
+    private static List<String> sortTwoPairs(List<String> cards) {
+        List<String> twoPairs = new ArrayList<>();
+        List<String> found = new ArrayList<>();
+        for (int i = 0; i < cards.size(); i++) {
+            String value = cards.get(i).substring(0, 1);
+            if (found.contains(value)) {
+                if (!twoPairs.contains(value)) {
+                    twoPairs.add(value);
+                }
+            } else {
+                found.add(value);
+            }
+        }
+        if (twoPairs.size() != 2) {
+            return null;
+        }
+        twoPairs.sort(getSortCardsComparator());
+        String single = cards.stream()
+                .filter(card -> !twoPairs.contains(card.substring(0, 1)))
+                .findFirst()
+                .orElseThrow();
+        twoPairs.sort(getSortCardsComparator());
+        List<String> sorted = new ArrayList<>();
+        sorted.addAll(twoPairs);
+        sorted.add(single);
+        return sorted;
+    }
+
+    private static List<String> sortPair(List<String> cards) {
+        String pairCard = null;
+        List<String> found = new ArrayList<>();
+        for (int i = 0; i < cards.size(); i++) {
+            String value = cards.get(i).substring(0, 1);
+            if (found.contains(value)) {
+                pairCard = cards.get(i);
+                break;
+            } else {
+                found.add(value);
+            }
+        }
+        if (pairCard == null) {
+            return null;
+        }
+        final String pairCard_FINAL = pairCard;
+        List<String> withoutPair = cards.stream()
+                .filter(card -> !card.equals(pairCard_FINAL))
+                .sorted(getSortCardsComparator())
+                .collect(Collectors.toList());
+        List<String> result = new ArrayList<>();
+        result.add(pairCard);
+        result.addAll(withoutPair);
+        return result;
+    }
+
+    private static Comparator<String> getSortCardsComparator() {
+        return (card1, card2) -> estimateCard(card2.substring(0, 1)) - estimateCard(card1.substring(0, 1));
+    }
+
     // ===================== TEST UTILITIES ===================== //
 
     private static void test() throws Exception {
@@ -441,21 +466,13 @@ public class App {
         assertFalse(isPair(Arrays.asList(new String[] { "2D", "3D", "4D", "5D", "6D" })));
         assertFalse(isPair(Arrays.asList(new String[] { "TC", "QD", "4H", "JD", "6S" })));
 
-        // sortPair
-        List<String> actual2 = sortPair(Arrays.asList(new String[] { "KD", "KD", "3C", "JD", "4S" }));
-        String[] expected2 = new String[] { "KD", "JD", "4S", "3C" };
-        for (int i = 0; i < actual2.size(); i++) {
-            assertEqual(expected2[i], actual2.get(i));
-        }
-
-        // sortCards
-        List<String> actual1 = Arrays
-                .asList(new String[] { "AS", "4S", "QS", "6S", "TH", "KH", "JH", "2H", "8C", "5C", "3D", "7D", "9S", });
-        String[] expected1 = new String[] { "A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2", "1" };
-        actual1.sort(getSortCardsComparator());
-        for (int i = 0; i < actual1.size(); i++) {
-            assertEqual(expected1[i], actual1.get(i).substring(0, 1));
-        }
+        // handleTwoPairs
+        assertEqual(1, handleTieTwoPairs(
+                Arrays.asList(new String[] { "3D", "3D", "KD", "KD", "AD" }),
+                Arrays.asList(new String[] { "3D", "3D", "4D", "4D", "AD" })));
+        assertEqual(2, handleTieTwoPairs(
+                Arrays.asList(new String[] { "4D", "JD", "JD", "QD", "QD" }),
+                Arrays.asList(new String[] { "3D", "TD", "TD", "AD", "AD" })));
 
         // handleTiePair
         assertEqual(1, handleTiePair(
@@ -472,6 +489,51 @@ public class App {
         assertEqual(2, handleTieDefault(
                 Arrays.asList(new String[] { "7D", "5D", "3D", "4D", "5D" }),
                 Arrays.asList(new String[] { "QD", "JD", "TD", "KD", "9D" })));
+
+        // prepare reusable actual and expected list
+        List<String> actual;
+        String[] expected;
+
+        // sortTwoPairs
+        actual = sortTwoPairs(Arrays.asList(new String[] { "3C", "JS", "JH", "3D", "AS" }));
+        expected = new String[] { "J", "3", "A" };
+        for (int i = 0; i < actual.size(); i++) {
+            assertEqual(expected[i], actual.get(i).substring(0, 1));
+        }
+
+        // sortPair
+        actual = sortPair(Arrays.asList(new String[] { "KD", "KD", "3C", "JD", "4S" }));
+        expected = new String[] { "K", "J", "4", "3" };
+        for (int i = 0; i < actual.size(); i++) {
+            assertEqual(expected[i], actual.get(i).substring(0, 1));
+        }
+
+        // sortCards
+        actual = Arrays
+                .asList(new String[] { "AS", "4S", "QS", "6S", "TH", "KH", "JH", "2H", "8C", "5C", "3D", "7D", "9S", });
+        expected = new String[] { "A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2", "1" };
+        actual.sort(getSortCardsComparator());
+        for (int i = 0; i < actual.size(); i++) {
+            assertEqual(expected[i], actual.get(i).substring(0, 1));
+        }
+
+        // sortCards (suits are not given at all)
+        actual = Arrays
+                .asList(new String[] { "A", "4", "Q", "6", "T", "K", "J", "2", "8", "5", "3", "7", "9", });
+        expected = new String[] { "A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2", "1" };
+        actual.sort(getSortCardsComparator());
+        for (int i = 0; i < actual.size(); i++) {
+            assertEqual(expected[i], actual.get(i).substring(0, 1));
+        }
+
+        // sortCards (some suits are not given)
+        List<String> actual4 = Arrays
+                .asList(new String[] { "A", "4", "Q", "6S", "T", "K", "JC", "2", "8", "5H", "3", "7D", "9", });
+        String[] expected4 = new String[] { "A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2", "1" };
+        actual4.sort(getSortCardsComparator());
+        for (int i = 0; i < actual4.size(); i++) {
+            assertEqual(expected4[i], actual4.get(i).substring(0, 1));
+        }
     }
 
     private static void assertTrue(boolean statement) throws Exception {
