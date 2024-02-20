@@ -1,15 +1,6 @@
-# Java
-version 11+
-
-# Development
-```
-cat poker-hands.txt | java main/App.java
-```
-
-# Testing
-```
-java main/App.java test
-```
+# prerequisites
+- JDK version 11+
+- Unix-based machine (For windows, command to build and run java app might be different)
 
 # Build
 ```
@@ -20,4 +11,10 @@ jar cfm app.jar ./manifest.txt main/*
 # Run
 ```
 cat poker-hands.txt | java -jar app.jar
+```
+
+# Unit-testing
+```
+javac main/App.java
+java main.App test
 ```
