@@ -4,8 +4,8 @@
 
 # Build
 ```
-javac main/App.java
-jar cfm app.jar ./manifest.txt main/*
+javac app/App.java
+jar cfm app.jar ./manifest.txt app/*
 ```
 
 # Run
@@ -15,6 +15,6 @@ cat poker-hands.txt | java -jar app.jar
 
 # Unit-testing
 ```
-javac main/App.java
-java main.App test
+javac app/App.java
+java app.App test
 ```
