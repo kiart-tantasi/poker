@@ -5,12 +5,12 @@
 # Build
 ```
 javac app/App.java
-jar cfm app.jar ./manifest.txt app/*
+jar cfm my-poker-solution.jar ./manifest.txt app/*
 ```
 
 # Run
 ```
-cat poker-hands.txt | java -jar app.jar
+cat poker-hands.txt | java -jar my-poker-solution.jar
 ```
 
 # Unit-testing
