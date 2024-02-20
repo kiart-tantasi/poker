@@ -1,6 +1,6 @@
 # prerequisites
 - JDK version 11+
-- Unix-based machine (For windows, command to build and run java app might be different)
+- Command lines "javac", "jar" and "java"
 
 # Build
 ```
