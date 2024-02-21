@@ -1,6 +1,6 @@
 # Explanation
 
-## Flowchart representing how app works
+## Flowchart
 
 <img src='flowchart.png' >
 
@@ -18,7 +18,7 @@ tie needs to be detailedly handled. several ranks need really specific method to
 
 # Build, Run and Test
 
-## prerequisites
+## Prerequisites
 - JDK version 11+
 - Command lines "javac", "jar" and "java"
 
