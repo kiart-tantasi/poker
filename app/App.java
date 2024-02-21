@@ -36,8 +36,7 @@ public class App {
                     break;
             }
         }
-        System.out.println("Player 1: " + win1);
-        System.out.println("Player 2: " + win2);
+        System.out.println(String.format("Player 1: %d\nPlayer 2: %d", win1, win2));
         scanner.close();
     }
 
