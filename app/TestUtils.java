@@ -5,7 +5,7 @@ import java.util.List;
 
 public class TestUtils {
     public static void runAllTests() throws Exception {
-        // RANK
+        // [RankUtils]
         // royal flush
         assertEqual(10, RankUtils.rank(Arrays.asList(new String[] { "TD", "JD", "QD", "KD", "AD" })));
         assertNotEqual(10, RankUtils.rank(Arrays.asList(new String[] { "TS", "JD", "QD", "KD", "AD" })));
@@ -66,7 +66,7 @@ public class TestUtils {
         assertNotEqual(1, RankUtils.rank(Arrays.asList(new String[] { "2D", "3D", "4D", "5D", "6D" })));
         assertNotEqual(1, RankUtils.rank(Arrays.asList(new String[] { "TH", "JH", "QH", "KH", "AH" })));
 
-        // HANDLE TIE
+        // [TieUtils]
         // four of a kind
         assertEqual(1, TieUtils.handleTie(8,
                 Arrays.asList(new String[] { "5D", "5D", "5D", "5D", "3D" }),
@@ -118,6 +118,7 @@ public class TestUtils {
         List<String> actual;
         String[] expected;
 
+        // [SortUtils]
         // sortFourOfAKind
         actual = SortUtils.sortFourOfAKind(Arrays.asList(new String[] { "3C", "3S", "3H", "3D", "AS" }));
         expected = new String[] { "3", "A" };

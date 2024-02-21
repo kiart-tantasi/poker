@@ -10,10 +10,10 @@ import java.util.stream.Collectors;
  * [why I use SortUtils to help handle "tie" cases]
  *
  * let's assume player 1 has "3S 3H 5D 5D AS" and player 2 has "4S 4S 7H 7H AD"
- * which both of them are having two-pairs hand and in tie case
+ * which both of them are having two-pairs hand
  *
- * to figure out who wins, we need to sort the card values with specific
- * irregular logic (consider two-pairs before high card)
+ * to figure out who wins, we need to sort the card values with specific method
+ * (consider two-pairs before high-card)
  * after using this SortUtils to sort, the results will be "5 3 A" and "7 4 A"
  *
  * now we can start to compare the results one-by-one and can easily see that
